@@ -1,0 +1,60 @@
+_SETTINGS.txt
+_TITLES.txt
+!chromedriver72.exe
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Eclipse
+.project
+.classpath
+.settings
+
+# Idea
+.idea
+*.iml
+*.iws
+*.ipr
+# VS Code
+.vscode
+.history
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Gradle
+# 下記のGradle wrapperに必要な4つは、プロジェクトに含めることが推奨される
+# Unix Shell script
+!gradlew
+# Windows batch file
+!gradlew.bat
+# Wrapper properties
+!gradle/wrapper/gradle-wrapper.properties
+# Wrapper JAR
+!gradle/wrapper/gradle-wrapper.jar
+
+.gradle
+
+# Maven
+target
+
+# Build
+out
+build
+bin
+
+# Other
+*.log
+*.swp
+*.bak
+
+# npm
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
