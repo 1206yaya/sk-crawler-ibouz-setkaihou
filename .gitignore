@@ -1,12 +1,11 @@
-_SETTINGS.txt
-_TITLES.txt
-!chromedriver72.exe
 
 # Java
 *.class
 *.jar
 *.war
 *.ear
+
+
 
 # Eclipse
 .project
@@ -58,3 +57,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+
+# CUSTOM
+_SETTINGS.txt
+_TITLES.txt
+!chromedriver72.exe
+
+!sk-crawler-ibouz-setkaihou-application/libs/sk-crawler-ibouz-library-0.1.jar
