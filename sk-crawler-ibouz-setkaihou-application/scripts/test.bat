@@ -1,6 +1,6 @@
 @echo off
 REM 'https://stackoverflow.com/questions/1645843/resolve-absolute-path-from-relative-path-and-or-file-name'
-REM ƒ}ƒ‹ƒ`ƒvƒƒWƒFƒNƒg‚Ìƒ‹[ƒgƒfƒBƒŒƒNƒgƒŠ‚Ìâ‘ÎƒpƒX‚ğABS_PATH‚É“¾‚é
+REM ãƒãƒ«ãƒãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ«ãƒ¼ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®çµ¶å¯¾ãƒ‘ã‚¹ã‚’ABS_PATHã«å¾—ã‚‹
 
 set REL_PATH=..\..\
 set ABS_PATH=
@@ -14,8 +14,8 @@ set ABS_PATH=%CD%
 rem // Restore original directory
 popd
 
-REM Às‚·‚éƒfƒBƒŒƒNƒgƒŠ‚ÍapplicationƒfƒBƒŒƒNƒgƒŠ‚Å‚È‚¢‚Æ
-REM System.getProperty user.dir@‚ªapplication‚ğŠî€‚Æ‚µ‚È‚¢‚½‚ßAƒGƒ‰[‚É‚È‚é
+REM å®Ÿè¡Œã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã¯applicationãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã§ãªã„ã¨
+REM System.getProperty user.dirã€€ãŒapplicationã‚’åŸºæº–ã¨ã—ãªã„ãŸã‚ã€ã‚¨ãƒ©ãƒ¼ã«ãªã‚‹
 
 
 cd %~dp0
