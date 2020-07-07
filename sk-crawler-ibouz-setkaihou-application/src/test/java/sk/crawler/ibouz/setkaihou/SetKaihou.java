@@ -51,12 +51,14 @@ public class SetKaihou {
 
 	@Autowired
 	WebDriverUtil webDriverUtil;
-
+	
+	private File titleFile = CorePathConfig.TITLE_FILE;
 	public void setUp() throws IOException {
 		File settingFile = CorePathConfig.SETTING_FILE;
 		if (env == null || env.equals(CrawlerEnv.IS_DEV)) {
 			env = CrawlerEnv.IS_DEV;
 			settingFile = CorePathConfig.DEV_SETTING_FILE;
+			titleFile = CorePathConfig.DEV_TITLE_FILE;
 		}
 		webDriverUtil.setUp(env);
 		
