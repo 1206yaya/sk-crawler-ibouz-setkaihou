@@ -4,6 +4,7 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ public class CrawlerTest {
 
 	@Test
 	public void crawler() throws Exception {
+
 		GooglePage googlepage = open("https://www.google.co.jp", GooglePage.class);
 		String actualTitile = googlepage.context();
 		System.out.println("TITLE: " + actualTitile);

@@ -2,6 +2,7 @@ package sk.crawler.ibouz.setkaihou;
 
 import static com.codeborne.selenide.Selenide.open;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -15,27 +16,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-
-import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.WebDriverRunner;
 import com.google.common.collect.Iterables;
 
-import sk.crawler.ibouz.library.config.PathConfig;
-import sk.crawler.ibouz.library.domain.AdCode;
 import sk.crawler.ibouz.library.domain.Ibouz;
 import sk.crawler.ibouz.library.domain.IbouzBuilder;
 import sk.crawler.ibouz.library.pages.KaihouEditPage;
 import sk.crawler.ibouz.library.pages.LoginPage;
 import sk.crawler.ibouz.library.pages.UserSearchPage;
 import sk.crawler.ibouz.library.pages.UserSearchResultPage;
+import sk.crawler.ibouz.library.util.CrawlerEnv;
+import sk.crawler.ibouz.library.util.WebDriverUtil;
 import sk.crawler.ibouz.setkaihou.config.CorePathConfig;
 
-
+@SpringBootTest
 public class SetKaihou {
 	static Ibouz ibouz;
 	LocalDate today = LocalDate.now();
@@ -47,21 +46,23 @@ public class SetKaihou {
 	LocalDateTime kaihousetStartDay = LocalDateTime.of(tomorrow.getYear(), tomorrow.getMonth(),
 			tomorrow.getDayOfMonth(), 6, 01);
 
-	@BeforeAll
-	public static void setUp() throws IOException {
-		List<String> settings = FileUtils.readLines(CorePathConfig.SETTING_FILE, StandardCharsets.UTF_8);
-		ibouz = IbouzBuilder.createIbouz(settings.get(0), settings.get(1), settings.get(2), settings.get(3));
-		// C 開発時のみ
-//		Configuration.holdBrowserOpen = true;
-		Configuration.holdBrowserOpen = false;
-		Configuration.browser = WebDriverRunner.CHROME;
-		Configuration.headless = true;
-		if (System.getProperty("os.name").contains("Windows")) {
-			System.setProperty("webdriver.chrome.driver", PathConfig.CHROMEDRIVER_FOR_WIN_PATH);
-		} else {
-			System.setProperty("webdriver.chrome.driver", PathConfig.CHROMEDRIVER_FOR_LINUX_PATH);
-			System.out.println("OS IS LINUX");
+	@Value("#{systemProperties['env']}")
+	CrawlerEnv env;
+
+	@Autowired
+	WebDriverUtil webDriverUtil;
+
+	public void setUp() throws IOException {
+		File settingFile = CorePathConfig.SETTING_FILE;
+		if (env == null || env.equals(CrawlerEnv.IS_DEV)) {
+			env = CrawlerEnv.IS_DEV;
+			settingFile = CorePathConfig.DEV_SETTING_FILE;
 		}
+		webDriverUtil.setUp(env);
+		
+
+		List<String> settings = FileUtils.readLines(settingFile, StandardCharsets.UTF_8);
+		ibouz = IbouzBuilder.createIbouz(settings.get(0), settings.get(1), settings.get(2), settings.get(3));
 	}
 
 	int etcIdSize = 180000;
@@ -74,15 +75,15 @@ public class SetKaihou {
 //	int docomoIdSize = 150;
 //	int etcIdBlockSize = 1000;
 //	int docomoIdBlockSize = 50;
-	
+
 	@Test
 	public void crawler() throws Exception {
-		List<String> titles = FileUtils.readLines(CorePathConfig.TITLE_FILE, StandardCharsets.UTF_8);
+		setUp();
+		List<String> titles = FileUtils.readLines(CorePathConfig.DEV_TITLE_FILE, StandardCharsets.UTF_8);
 
 		login();
-		/** 
-		 * 1. IDの取得
-		 * 検索結果が制限Overにならないよう6時間区切りで検索をする
+		/**
+		 * 1. IDの取得 検索結果が制限Overにならないよう6時間区切りで検索をする
 		 */
 		List<String> etcIds = getIds(etcIdSize, List.of("AU", "SoftBank", "WILLCOM", "PC"), 6);
 		List<String> docomoIds = getIds(docomoIdSize, List.of("DoCoMo"), 6);
@@ -97,10 +98,9 @@ public class SetKaihou {
 		for (List<String> block : Iterables.partition(docomoIds, docomoIdBlockSize)) {
 			docomoIdblockList.add(block);
 		}
-		
+
 		/**
-		 * 3. 会報送信セット
-		 * 翌日6:01から23:59まで、合計kaihousetSize = 540 回分のセットを行う
+		 * 3. 会報送信セット 翌日6:01から23:59まで、合計kaihousetSize = 540 回分のセットを行う
 		 */
 		int blockCount = 0;
 		int titleCount = 0;
@@ -117,7 +117,7 @@ public class SetKaihou {
 			List<String> docomoIdBlock = docomoIdblockList.get(blockCount);
 			blockCount++;
 			List<String> allIds = Stream.concat(etcIdBlock.stream(), docomoIdBlock.stream())
-                    .collect(Collectors.toList());
+					.collect(Collectors.toList());
 
 			UserSearchPage userSearchPage = open(ibouz.getUserSearchURL(), UserSearchPage.class);
 			userSearchPage.setIds(allIds);
@@ -129,13 +129,13 @@ public class SetKaihou {
 
 			setKaihou(kaihouEditPage, title, targetKaihouSetDay);
 			long end = System.currentTimeMillis();
-			System.out.println(formatedTime(end - start) + ":" + i + "/" + kaihousetSize + " idSize:" + allIds.size() + " title:" + title + " 予約日時: "
-					+ targetKaihouSetDay);
+			System.out.println(formatedTime(end - start) + ":" + i + "/" + kaihousetSize + " idSize:" + allIds.size()
+					+ " title:" + title + " 予約日時: " + targetKaihouSetDay);
 			targetKaihouSetDay = targetKaihouSetDay.plusMinutes(2);
 			kaihouEditPage.submit();
 			kaihouEditPage.changeNewWindow();
 		}
-		
+
 	}
 
 	private void setKaihou(KaihouEditPage kaihouEditPage, String title, LocalDateTime targetKaihouSetDay) {
@@ -172,7 +172,7 @@ public class SetKaihou {
 			} else {
 				resultIds = userSearchResultPage.getTotalIdList();
 			}
-			
+
 			ids.addAll(resultIds);
 			userSearchResultPage.changeNewWindow();
 			System.out.println(
