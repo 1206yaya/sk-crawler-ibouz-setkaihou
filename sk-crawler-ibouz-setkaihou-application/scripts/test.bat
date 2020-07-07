@@ -2,6 +2,7 @@
 REM 'https://stackoverflow.com/questions/1645843/resolve-absolute-path-from-relative-path-and-or-file-name'
 REM マルチプロジェクトのルートディレクトリの絶対パスをABS_PATHに得る
 
+
 set REL_PATH=..\..\
 set ABS_PATH=
 
@@ -16,7 +17,6 @@ popd
 
 REM 実行するディレクトリはapplicationディレクトリでないと
 REM System.getProperty user.dir　がapplicationを基準としないため、エラーになる
-
 
 cd %~dp0
 cd ../

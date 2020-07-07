@@ -17,7 +17,6 @@ popd
 REM 実行するディレクトリはapplicationディレクトリでないと
 REM System.getProperty user.dir　がapplicationを基準としないため、エラーになる
 
-
 cd %~dp0
 cd ../
 
