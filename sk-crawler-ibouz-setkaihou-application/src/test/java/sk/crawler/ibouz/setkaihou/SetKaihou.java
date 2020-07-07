@@ -81,7 +81,7 @@ public class SetKaihou {
 	@Test
 	public void crawler() throws Exception {
 		setUp();
-		List<String> titles = FileUtils.readLines(CorePathConfig.DEV_TITLE_FILE, StandardCharsets.UTF_8);
+		List<String> titles = FileUtils.readLines(titleFile, StandardCharsets.UTF_8);
 
 		login();
 		/**
