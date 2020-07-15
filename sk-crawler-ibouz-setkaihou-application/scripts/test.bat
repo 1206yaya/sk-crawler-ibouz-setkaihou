@@ -21,5 +21,5 @@ REM System.getProperty user.dir　がapplicationを基準としないため、�
 cd %~dp0
 cd ../
 
-cmd /k %ABS_PATH%/gradlew.bat :sk-crawler-ibouz-setkaihou-application:test --tests "sk.crawler.ibouz.setkaihou.CrawlerTest" -i
+cmd /k %ABS_PATH%/gradlew.bat :sk-crawler-ibouz-setkaihou-application:test -Denv=IS_PROD --tests "sk.crawler.ibouz.setkaihou.CrawlerTest" -i
 

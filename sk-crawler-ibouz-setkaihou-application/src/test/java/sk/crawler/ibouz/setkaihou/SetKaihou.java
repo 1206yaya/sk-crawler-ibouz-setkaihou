@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +50,7 @@ public class SetKaihou {
 
 	@Autowired
 	WebDriverUtil webDriverUtil;
-	
+
 	private File titleFile = CorePathConfig.TITLE_FILE;
 	public void setUp() throws IOException {
 		File settingFile = CorePathConfig.SETTING_FILE;
