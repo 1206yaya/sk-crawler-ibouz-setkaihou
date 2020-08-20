@@ -1,5 +1,5 @@
 rootProject.name = 'sk-crawler-ibouz-setkaihou'
-include 'sk-crawler-ibouz-setkaihou-application'
+include 'application'
 
 include 'sk-crawler-ibouz-library'
 project(':sk-crawler-ibouz-library').projectDir = new File('../sk-crawler-ibouz-library')

@@ -63,6 +63,6 @@ _SETTINGS.txt
 _TITLES.txt
 !chromedriver72.exe
 
-!sk-crawler-ibouz-setkaihou-application/libs/*.jar
+!application/libs/*.jar
 DEV_SETTINGS.txt
 DEV_TITLES.txt

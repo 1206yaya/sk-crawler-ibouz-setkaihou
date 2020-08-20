@@ -1,0 +1,81 @@
+buildscript {
+	ext {
+		springBootVersion = '2.3.1.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+plugins {
+	id 'org.springframework.boot' version '2.3.1.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'sk.crawler.ibouz.setkaihou'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.projectlombok:lombok'
+	
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	// JPAを使っていなくてもibouz-libraryの方で使っているので必要
+	runtimeOnly 'com.h2database:h2'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+compile group: 'com.codeborne', name: 'selenide', version: '5.12.2'
+	// 開発モード
+	// 	gradle test -i -Denv=IS_DEV
+	// 	gradle test -i 
+	// 本番モード
+	// 	gradle test -i -Denv=IS_PROD
+	
+	// 本番環境ではlibsディレクトリのjarを読み込む
+	// if (project.hasProperty("isProduction")) {
+	if (System.properties['env'].equals("IS_PROD")) {
+		implementation fileTree(dir: 'libs', include: '*.jar')
+	} else {
+		implementation project(':sk-crawler-ibouz-library')
+	}
+
+}
+
+task zakki() {
+	println projectDir
+	// println project.hasProperty("isProduction")
+	// println "Hello ${System.properties['env']}"
+}
+
+test {
+	useJUnitPlatform()
+	systemProperties(System.getProperties())
+	// キャッシュを削除
+	delete "${rootDir}/.gradle/buildOutputCleanup/cache.properties"
+
+}
+
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
