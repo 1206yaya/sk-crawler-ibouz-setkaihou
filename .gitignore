@@ -61,7 +61,7 @@ yarn-error.log*
 # CUSTOM
 _SETTINGS.txt
 _TITLES.txt
-!chromedriver72.exe
+!chromedriver88.exe
 
 !application/libs/*.jar
 DEV_SETTINGS.txt

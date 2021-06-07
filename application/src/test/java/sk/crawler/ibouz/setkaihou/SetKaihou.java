@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -65,12 +66,13 @@ public class SetKaihou {
 		List<String> settings = FileUtils.readLines(settingFile, StandardCharsets.UTF_8);
 		ibouz = IbouzBuilder.createIbouz(settings.get(0), settings.get(1), settings.get(2), settings.get(3));
 	}
-
-	int etcIdSize = 180000;
-	int docomoIdSize = 9000;
-	int etcIdBlockSize = 3000;
-	int docomoIdBlockSize = 150;
+	
+	int etcIdSize = 180000; 
+	int docomoIdSize = 18000; // 9000 -> 18000
+	int etcIdBlockSize = 6000; // 3000 -> 6000
+	int docomoIdBlockSize = 300; // 150 -> 300
 	int kaihousetSize = 540;
+	
 	// テスト用
 //	int etcIdSize = 3000;
 //	int docomoIdSize = 150;
@@ -130,8 +132,10 @@ public class SetKaihou {
 
 			setKaihou(kaihouEditPage, title, targetKaihouSetDay);
 			long end = System.currentTimeMillis();
-			System.out.println(formatedTime(end - start) + ":" + i + "/" + kaihousetSize + " idSize:" + allIds.size()
+			String thisTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+			System.out.println(thisTime + " " + formatedTime(end - start) + ":" + i + "/" + kaihousetSize + " idSize:" + allIds.size()
 					+ " title:" + title + " 予約日時: " + targetKaihouSetDay);
+			System.out.println();
 			targetKaihouSetDay = targetKaihouSetDay.plusMinutes(2);
 			kaihouEditPage.submit();
 			kaihouEditPage.changeNewWindow();
@@ -164,7 +168,7 @@ public class SetKaihou {
 			LocalDateTime since = targetDay.minusHours(splitHour);
 			userSearchPage.setRegistrationTime(since, until);
 			targetDay = targetDay.minusHours(splitHour);
-
+			
 			UserSearchResultPage userSearchResultPage = userSearchPage.search();
 			int resultCount = userSearchResultPage.getResultCount();
 			List resultIds = null;
