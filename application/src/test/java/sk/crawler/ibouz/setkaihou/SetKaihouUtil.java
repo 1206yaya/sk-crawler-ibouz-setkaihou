@@ -109,6 +109,8 @@ public class SetKaihouUtil {
 
 			// 初回ログイン 未ログインON
 			userSearchPage.clickNewaccLoginNotLogin();
+			// メインメールエラー回数 0 ~ 1 
+			userSearchPage.setMailErrorNum(0, 1);
 			UserSearchResultPage userSearchResultPage = userSearchPage.search();
 			KaihouEditPage kaihouEditPage = userSearchResultPage.clickKaihouYoyaku();
 
