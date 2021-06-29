@@ -2,6 +2,10 @@ package sk.crawler.ibouz.setkaihou;
 
 import static com.codeborne.selenide.Selenide.open;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -9,6 +13,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 import com.google.common.collect.Iterables;
 
@@ -87,14 +95,14 @@ public class SetKaihouUtil {
 		return kaihouIds;
 	}
 
-	private void setKaihouContent(KaihouEditPage kaihouEditPage, String title, LocalDateTime targetKaihouSetDay) {
+	private void setKaihouContent(KaihouEditPage kaihouEditPage, String title,String message, LocalDateTime targetKaihouSetDay) {
 		kaihouEditPage.setTitle(title);
-		kaihouEditPage.setMessage("%site_url%blanc.php?id=%id%&pass=%pass%");
+		kaihouEditPage.setMessage(message);
 		kaihouEditPage.setReservationDateAndTime(targetKaihouSetDay.getYear(), targetKaihouSetDay.getMonthValue(),
 				targetKaihouSetDay.getDayOfMonth(), targetKaihouSetDay.getHour(), targetKaihouSetDay.getMinute());
 	}
 
-	public void setKaihou(List<String> titles, int kaihousetSize, LocalDateTime kaihousetStartDay, List<List<String>> allIds) {
+	public void setKaihou(List<KaihouContent> contents, int kaihousetSize, LocalDateTime kaihousetStartDay, List<List<String>> allIds) {
 		/**
 		 * 3. 会報送信セット 翌日6:01から23:59まで、合計kaihousetSize = 540 回分のセットを行う
 		 */
@@ -114,16 +122,18 @@ public class SetKaihouUtil {
 			UserSearchResultPage userSearchResultPage = userSearchPage.search();
 			KaihouEditPage kaihouEditPage = userSearchResultPage.clickKaihouYoyaku();
 
-			if (titleCount == titles.size()) {
+			if (titleCount == contents.size()) {
 				titleCount = 0;
 			}
-			String title = titles.get(titleCount++);
-
-			setKaihouContent(kaihouEditPage, title, targetKaihouSetDay);
+			KaihouContent content = contents.get(titleCount++);
+			String title = content.getTitle();
+			String message = content.getMessage();
+			
+			setKaihouContent(kaihouEditPage, title, message, targetKaihouSetDay);
 			long end = System.currentTimeMillis();
 			String thisTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 			System.out.println(thisTime + " " + formatedTime(end - start) + ":" + (i+1) + "/" + kaihousetSize
-					+ " idSize:" + ids.size() + " title:" + title + " 予約日時: " + targetKaihouSetDay);
+					+ " idSize:" + ids.size() + " title:" + title  + " message:" + message +  " 予約日時: " + targetKaihouSetDay);
 			System.out.println();
 			targetKaihouSetDay = targetKaihouSetDay.plusMinutes(2);
 			kaihouEditPage.submit();
@@ -153,15 +163,29 @@ public class SetKaihouUtil {
 	}
 
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public static List<KaihouContent> getContents(String filePath) throws IOException {
+        
+		List<KaihouContent> contents = new ArrayList<>();
+	    FileInputStream fis = new FileInputStream(filePath);
+	    BufferedReader br = null;
+        CSVParser parse = null;
+        
+        InputStreamReader isr = new InputStreamReader(fis, "shift-jis");
+        br = new BufferedReader(isr);
+        // CSVファイルをパース
+        parse = CSVFormat.EXCEL.parse(br);
+        // レコードのリストに変換
+        List<CSVRecord> recordList = parse.getRecords();
+        
+        // 各レコードを標準出力に出力
+        for (CSVRecord record : recordList) {
+        	KaihouContent content = new KaihouContent(record.get(0), record.get(1));
+        	contents.add(content);
+        }
+		return contents;
+	}
+
+
 	
 	
 	

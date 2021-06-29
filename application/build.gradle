@@ -45,6 +45,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 compile group: 'com.codeborne', name: 'selenide', version: '5.12.2'
+implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.8'
+
 	// 開発モード
 	// 	gradle test -i -Denv=IS_DEV
 	// 	gradle test -i 

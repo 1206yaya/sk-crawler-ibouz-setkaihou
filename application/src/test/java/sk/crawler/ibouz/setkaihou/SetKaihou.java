@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -42,13 +44,15 @@ public class SetKaihou {
 	@Autowired
 	WebDriverUtil webDriverUtil;
 
-	private File titleFile = CorePathConfig.TITLE_FILE;
+	private String contentsFile = CorePathConfig.CONTENTS_PATH;
+	
+
 	public void setUp() throws IOException {
 		File settingFile = CorePathConfig.SETTING_FILE;
 		if (env == null || env.equals(CrawlerEnv.IS_DEV)) {
 			env = CrawlerEnv.IS_DEV;
 			settingFile = CorePathConfig.DEV_SETTING_FILE;
-			titleFile = CorePathConfig.DEV_TITLE_FILE;
+			contentsFile = CorePathConfig.DEV_CONTENTS_PATH;
 		}
 		webDriverUtil.setUp(env);
 		
@@ -56,11 +60,10 @@ public class SetKaihou {
 		List<String> settings = FileUtils.readLines(settingFile, StandardCharsets.UTF_8);
 		ibouz = IbouzBuilder.createIbouz(settings.get(0), settings.get(1), settings.get(2), settings.get(3));
 	}
-	
+
 	@Test
 	public void crawler() throws Exception {
 		setUp();
-		List<String> titles = FileUtils.readLines(titleFile, StandardCharsets.UTF_8);
 		LocalDate today = LocalDate.now();
 		LocalDate yesterday = today.minusDays(1);
 		LocalDate tomorrow = today.plusDays(1);;
@@ -70,6 +73,9 @@ public class SetKaihou {
 		LocalDateTime kaihousetStartDay = LocalDateTime.of(tomorrow.getYear(), tomorrow.getMonth(),
 				tomorrow.getDayOfMonth(), 6, 01);
 		
+		SetKaihouUtil skUtil = new SetKaihouUtil(ibouz, collectStartDay);
+		List<KaihouContent> contents = skUtil.getContents(contentsFile);
+		
 		login();
 		
 		/** 
@@ -78,7 +84,7 @@ public class SetKaihou {
 		String _1_tokusyuStatus = "デフォルト";
 		int kaihousetSize = 540;
 		int etcIdSize = 150000;
-		int etcIdBlockSize = 4500;
+		int etcIdBlockSize = 4000;
 		int docomoIdSize = 18000;
 		int docomoIdBlockSize = 300;
 		// テスト用
@@ -89,7 +95,7 @@ public class SetKaihou {
 //		int docomoIdBlockSize = 3;
 		
 		
-		SetKaihouUtil skUtil = new SetKaihouUtil(ibouz, collectStartDay);
+		
 
 		// ID抽出
 		List<String> etcIds = skUtil.getIds(etcIdSize, List.of("AU", "SoftBank", "WILLCOM", "PC"), 6, _1_tokusyuStatus);
@@ -101,7 +107,7 @@ public class SetKaihou {
 		Collections.addAll(_1_patterns, etcPattern, docomoPattern);
 
 		List<List<String>> _1_allIds = skUtil.divide(kaihousetSize, _1_patterns);
-		skUtil.setKaihou(titles, kaihousetSize, kaihousetStartDay, _1_allIds);
+		skUtil.setKaihou(contents, kaihousetSize, kaihousetStartDay, _1_allIds);
 		
 		/**
 		 * 条件2
@@ -116,7 +122,7 @@ public class SetKaihou {
 		List<String> _2_ids = skUtil.getIds(_2_idSize, List.of("AU", "SoftBank", "WILLCOM", "PC", "DoCoMo"), 6, _2_tokusyuStatus);
 		SetPattern _2_setPattern = new SetPattern(_2_idSize, _2_idBlockSize, _2_ids);
  		List<List<String>> _2_allIds = skUtil.divide(kaihousetSize, Collections.singleton(_2_setPattern));
-		skUtil.setKaihou(titles, kaihousetSize, kaihousetStartDay, _2_allIds);
+		skUtil.setKaihou(contents, kaihousetSize, kaihousetStartDay, _2_allIds);
 
 	}
 

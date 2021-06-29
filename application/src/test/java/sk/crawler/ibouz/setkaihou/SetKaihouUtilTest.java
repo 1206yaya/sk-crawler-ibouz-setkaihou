@@ -1,5 +1,7 @@
 package sk.crawler.ibouz.setkaihou;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,10 +11,11 @@ import org.junit.jupiter.api.Test;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import sk.crawler.ibouz.setkaihou.config.CorePathConfig;
 import sk.crawler.ibouz.setkaihou.config.SetPattern;
 
 public class SetKaihouUtilTest {
-	@Test
+//	@Test
 	public void divideTest() {
 		int _1_idSize = 5;
 		int _1_idBlockSize = 2;
@@ -35,5 +38,13 @@ public class SetKaihouUtilTest {
 		List<List<String>> concatList = SetKaihouUtil.divide(setSize, patterns);
 		
 		System.out.println(concatList);
+	}
+	
+	@Test
+	public void getContentsTest() throws IOException {
+		String contentsFile = CorePathConfig.CONTENTS_PATH;
+		List<KaihouContent> contents = SetKaihouUtil.getContents(contentsFile);
+		
+		System.out.println();
 	}
 }
