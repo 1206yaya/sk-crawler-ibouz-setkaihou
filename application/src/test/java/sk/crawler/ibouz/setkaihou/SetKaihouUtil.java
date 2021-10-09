@@ -85,8 +85,11 @@ public class SetKaihouUtil {
 //			System.out.println(sb.toString());
 			
 		}
-		
-		List<String> kaihouIds = Iterables.partition(ids, idSize).iterator().next();
+		List<String> kaihouIds = new ArrayList<>();
+		if (ids.size() == 0) {
+			return kaihouIds;
+		}
+		kaihouIds = Iterables.partition(ids, idSize).iterator().next();
 		
 		StringBuilder sb = new StringBuilder();
 		kaihouIds.forEach(id -> sb.append(id + " "));

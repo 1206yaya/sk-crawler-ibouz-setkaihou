@@ -93,9 +93,6 @@ public class SetKaihou {
 //		int etcIdBlockSize = 2;
 //		int docomoIdSize = 7;
 //		int docomoIdBlockSize = 3;
-		
-		
-		
 
 		// ID抽出
 		List<String> etcIds = skUtil.getIds(etcIdSize, List.of("AU", "SoftBank", "WILLCOM", "PC"), 6, _1_tokusyuStatus);
@@ -120,6 +117,9 @@ public class SetKaihou {
 //		int _2_idBlockSize = 2;
 		
 		List<String> _2_ids = skUtil.getIds(_2_idSize, List.of("AU", "SoftBank", "WILLCOM", "PC", "DoCoMo"), 6, _2_tokusyuStatus);
+		if (_2_ids.size() == 0) {
+			return ;
+		}
 		SetPattern _2_setPattern = new SetPattern(_2_idSize, _2_idBlockSize, _2_ids);
  		List<List<String>> _2_allIds = skUtil.divide(kaihousetSize, Collections.singleton(_2_setPattern));
 		skUtil.setKaihou(contents, kaihousetSize, kaihousetStartDay, _2_allIds);
